@@ -130,7 +130,7 @@ class Parser:
         self.current_token = self.lexer.get_next_token()
         self.line = 1
     def error(self):
-        raise SyntaxError('Invalid syntax at line {}'.format(self.line))
+        raise SyntaxError('Invalid syntax at the line {}'.format(self.line))
 
     def eat(self, token_type):
         # print(self.current_token.type)
