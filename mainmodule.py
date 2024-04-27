@@ -159,9 +159,10 @@ class Parser:
             self.eat('LPAREN')
             self.eat('RPAREN')
             self.eat("EOL")
-
         elif self.current_token.type == "IDENT":
             self.eat("IDENT")
+            if self.current_token.type != "COMMA" and self.current_token.type != "SEMI":
+                self.error()
             self.declaration()
         elif self.current_token.type == "COMMA":
             self.eat("COMMA")
