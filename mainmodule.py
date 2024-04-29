@@ -1,4 +1,3 @@
-
 # program → declaration | statement | block
 # block → BEGIN statement END
 # statement → declaration | if_statement | printf_statement | EOL
@@ -7,6 +6,7 @@
 # declaration → INT (IDENT | declaration | COMMA)* SEMI
 # expression → IDENT (RELOP IDENT)*
 # Token → (INTEGER | LPAREN | RPAREN | COMMA | SEMI | EOL | INT | MAIN | PRINTF | BEGIN | END | IF | IDENT | RELOP)
+
 class Token:
     def __init__(self, token_type, value=None):
         self.type = token_type
@@ -129,11 +129,12 @@ class Parser:
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
         self.line = 1
+
     def error(self):
-        raise SyntaxError('Invalid syntax at the line {}'.format(self.line))
+        raise SyntaxError('Invalid syntax at line {}'.format(self.line))
 
     def eat(self, token_type):
-        # print(self.current_token.type)
+        print("Eating token:", self.current_token.type, ", Value:", self.current_token.value)
         if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
         else:
@@ -149,6 +150,7 @@ class Parser:
         return identifiers
 
     def declaration(self):
+        print("Declaration:")
         if(self.current_token.type=="INT"):
             self.eat("INT")
 
@@ -159,9 +161,10 @@ class Parser:
             self.eat('LPAREN')
             self.eat('RPAREN')
             self.eat("EOL")
+
         elif self.current_token.type == "IDENT":
             self.eat("IDENT")
-            if self.current_token.type != "COMMA" and self.current_token.type != "SEMI":
+            if self.current_token.type!="COMMA" and self.current_token.type!="SEMI":
                 self.error()
             self.declaration()
         elif self.current_token.type == "COMMA":
@@ -171,18 +174,18 @@ class Parser:
             self.error()
 
     def if_statement(self):
+        print("If Statement:")
         self.eat('IF')
         self.eat('LPAREN')
         self.expression()
         self.eat('RPAREN')
 
-        self.line+=1
+        self.line += 1
         self.eat("EOL")
         self.block()
 
-
-
     def printf_statement(self):
+        print("Printf Statement:")
         self.eat('PRINTF')
         self.eat('LPAREN')
         self.eat('IDENT')
@@ -190,21 +193,21 @@ class Parser:
         self.eat('SEMI')
 
     def block(self):
+        print("Block:")
         self.eat("BEGIN")
-
         while self.current_token.type != 'END':
-            # print(self.current_token.type)
-            if self.current_token.type=="PRINTF":
+            if self.current_token.type == "PRINTF":
                 self.printf_statement()
             else:
                 self.statement()
         self.eat("END")
 
     def statement(self):
+        print("Statement:")
         if self.current_token.type == 'INT':
             self.declaration()
         elif self.current_token.type == 'EOL':
-            self.line+=1
+            self.line += 1
             self.eat('EOL')
 
         elif self.current_token.type == 'IF':
@@ -216,18 +219,20 @@ class Parser:
             self.error()
 
     def expression(self):
+        print("Expression:")
         self.eat('IDENT')
         while self.current_token.type == 'RELOP':
             self.eat('RELOP')
             self.eat('IDENT')
 
     def parse(self):
+        print("Parsing started:")
         while self.current_token.type != 'EOF':
             if self.current_token.type == 'INT':
                 self.eat('INT')
                 self.declaration()
             elif self.current_token.type == "EOL":
-                self.line+=1
+                self.line += 1
                 self.eat("EOL")
             elif self.current_token.type == 'IF':
                 self.if_statement()
@@ -244,10 +249,10 @@ class Parser:
 text = """
 int main()
 begin
-int n1,n2,n3;
+int n1, n, n3;
 if( n1 > n2 )
 begin
- printf( n1);
+ printf(n1);
  end
  if ( n2 > n3 )
  begin
